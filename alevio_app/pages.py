@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import os
+import json
+from datetime import datetime
 
 def login():
     st.markdown("""
@@ -43,6 +46,27 @@ def projekt_anlegen():
             ts_start = st.selectbox("Timestamp Start Spalte", df.columns)
             ts_end = st.selectbox("Timestamp End Spalte", df.columns)
             if st.button("Projekt speichern", use_container_width=True, type="primary"):
+                # Projektordner anlegen
+                os.makedirs("projekte", exist_ok=True)
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                project_id = f"{prozessname}_{timestamp}".replace(" ", "_")
+                # CSV speichern
+                csv_path = f"projekte/{project_id}.csv"
+                df.to_csv(csv_path, index=False)
+                # Metadaten speichern
+                meta = {
+                    "department": department,
+                    "team": team,
+                    "prozessname": prozessname,
+                    "case_id": case_id,
+                    "activity": activity,
+                    "ts_start": ts_start,
+                    "ts_end": ts_end,
+                    "csv_path": csv_path,
+                    "created_at": timestamp
+                }
+                with open(f"projekte/{project_id}.json", "w") as f:
+                    json.dump(meta, f, indent=2)
                 st.success("Projekt gespeichert!")
         except Exception as e:
             st.error(f"Fehler beim Einlesen der Datei: {e}")
