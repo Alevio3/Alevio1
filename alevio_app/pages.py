@@ -90,6 +90,7 @@ def kpi_dashboard():
     st.info("Hier könnten KPIs visualisiert werden. (z.B. Balkendiagramme, Kennzahlen)")
 
 def control_center():
+<<<<<<< HEAD
     st.sidebar.title("Alevio Sidebar")
     st.sidebar.info("Hier kannst du Filter, Einstellungen oder Navigationselemente einbauen.")
 
@@ -110,3 +111,34 @@ def control_center():
         st.info("Hier werden später deine Projekte angezeigt.")
     elif st.session_state.get('view') == 'neuer_prozess':
         st.info("Hier kannst du einen neuen Prozess anlegen.")
+=======
+    st.title("Control Center")
+    st.write("Willkommen im Control Center! Hier kannst du deine Projekte verwalten.")
+
+def zusammenfassung():
+    st.markdown("""
+        <h1 style='color:#0057FF;font-weight:800;font-size:2.2rem;'>Zusammenfassung</h1>
+        <p style='color:#222;font-size:1.1rem;'>Hier findest du eine Übersicht über deine Projekte und wichtigsten Kennzahlen.</p>
+    """, unsafe_allow_html=True)
+    
+    # Beispiel: Projekte aus dem Ordner "projekte" laden
+    projekte_dir = "projekte"
+    if os.path.exists(projekte_dir):
+        projekte = [f for f in os.listdir(projekte_dir) if f.endswith(".json")]
+        if projekte:
+            for meta_file in projekte:
+                with open(os.path.join(projekte_dir, meta_file)) as f:
+                    meta = json.load(f)
+                st.subheader(meta.get("prozessname", "Unbekanntes Projekt"))
+                st.write(f"**Department:** {meta.get('department')}")
+                st.write(f"**Team:** {meta.get('team')}")
+                st.write(f"**Erstellt am:** {meta.get('created_at')}")
+                st.write("---")
+        else:
+            st.info("Noch keine Projekte vorhanden.")
+    else:
+        st.info("Noch keine Projekte vorhanden.")
+
+    # Beispiel für weitere KPIs oder Zusammenfassungen
+    st.info("Hier könnten weitere Kennzahlen oder Visualisierungen erscheinen.")
+>>>>>>> 394f43d159c1d4d3f20377a6212d2802df4f7709

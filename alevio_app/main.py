@@ -21,6 +21,12 @@ page = st.sidebar.radio("Seite wählen:", (
     "Prozessvisualisierung"
 ))
 
+if "logged_in" in st.session_state and st.session_state.logged_in:
+    # Standardmäßig nach Login ins Control Center
+    if page == "Log-In":
+        page = "Control Center"
+
+# ... dann wie gehabt:
 if page == "Log-In":
     pages.login()
 elif page == "Control Center":
