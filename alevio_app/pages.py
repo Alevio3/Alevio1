@@ -88,3 +88,25 @@ def kpi_dashboard():
         <h1 style='color:#0057FF;font-weight:800;font-size:2.2rem;'>KPI Dashboard</h1>
     """, unsafe_allow_html=True)
     st.info("Hier könnten KPIs visualisiert werden. (z.B. Balkendiagramme, Kennzahlen)")
+
+def control_center():
+    st.sidebar.title("Alevio Sidebar")
+    st.sidebar.info("Hier kannst du Filter, Einstellungen oder Navigationselemente einbauen.")
+
+    st.markdown("""
+        <h1 style='color:#0057FF;font-weight:800;font-size:2.2rem;'>Control Center</h1>
+        <p style='color:#222;font-size:1.1rem;'>Wähle eine Aktion:</p>
+    """, unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Meine Projekte", use_container_width=True, type="primary"):
+            st.session_state['view'] = 'meine_projekte'
+    with col2:
+        if st.button("Neuen Prozess anlegen", use_container_width=True):
+            st.session_state['view'] = 'neuer_prozess'
+
+    # Beispielhafte Navigation
+    if st.session_state.get('view') == 'meine_projekte':
+        st.info("Hier werden später deine Projekte angezeigt.")
+    elif st.session_state.get('view') == 'neuer_prozess':
+        st.info("Hier kannst du einen neuen Prozess anlegen.")
