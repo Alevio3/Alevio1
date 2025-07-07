@@ -1,26 +1,25 @@
 import streamlit as st
 import pandas as pd
 
-def handlungsempfehlung(df, case_col, activity_col, timestamp_col):
-    st.title("Handlungsempfehlungen & Insights")
-
-    # Engpässe erkennen (Aktivitäten mit längster mittlerer Verweildauer)
+def action_engine():
+    st.header('Handlungsempfehlungen')
+    if 'df' not in st.session_state:
+        st.warning('Bitte laden Sie zuerst eine CSV-Datei hoch.')
+        return
+    df = st.session_state['df']
+    case_col = st.session_state.get('case_col', df.columns[0])
+    activity_col = st.session_state.get('activity_col', df.columns[1])
+    timestamp_col = st.session_state.get('timestamp_col', df.columns[2])
+    df = df.copy()
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col])
     df = df.sort_values([case_col, timestamp_col])
     df['next_time'] = df.groupby(case_col)[timestamp_col].shift(-1)
-    df['duration'] = (pd.to_datetime(df['next_time']) - pd.to_datetime(df[timestamp_col])).dt.total_seconds() / 60
+    df['duration'] = (df['next_time'] - df[timestamp_col]).dt.total_seconds() / 60
     bottlenecks = df.groupby(activity_col)['duration'].mean().dropna().sort_values(ascending=False)
-
-    st.subheader("Automatisch erkannte Schwachstellen")
     if not bottlenecks.empty:
-        st.write("Die folgenden Aktivitäten haben die längste mittlere Verweildauer (potenzielle Engpässe):")
-        st.dataframe(bottlenecks.rename("Ø Verweildauer (min)"))
         top_bottleneck = bottlenecks.index[0]
-        st.warning(f"**Engpass erkannt:** Die Aktivität '{top_bottleneck}' ist ein potenzieller Flaschenhals im Prozess.")
-
-        # Einfache Optimierungsvorschläge
-        st.subheader("Vorschläge für Optimierungen")
-        st.info(f"**Empfehlung:** Analysiere die Ursachen für Verzögerungen bei '{top_bottleneck}'. "
-                "Mögliche Maßnahmen: Automatisierung, bessere Ressourcenzuteilung, Prozessvereinfachung.")
+        st.warning(f"Engpass erkannt: Die Aktivität '{top_bottleneck}' ist ein potenzieller Flaschenhals.")
+        st.info(f"Empfehlung: Analysiere die Ursachen für Verzögerungen bei '{top_bottleneck}'.")
     else:
         st.success("Keine auffälligen Engpässe im Prozess erkannt.")
 

@@ -26,3 +26,28 @@ def daten_upload():
             st.write(f"Activity: {activity_col}")
             st.write(f"Timestamp: {timestamp_col}")
             # Hier kannst du die Daten weiterverarbeiten (z.B. für Mining-Algorithmen)
+
+def upload_csv():
+    st.header('CSV-Daten hochladen')
+    uploaded_file = st.file_uploader('CSV-Datei hochladen', type=['csv'])
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+        st.session_state['df'] = df
+        st.success(f'Datei {uploaded_file.name} erfolgreich geladen!')
+        st.dataframe(df.head(20))
+        columns = list(df.columns)
+        dropdown_labels = ["Case-ID", "Aktivität", "Startzeit", "Endzeit"]
+        selected_cols = []
+        for i in range(4):
+            label = dropdown_labels[i] if i < len(dropdown_labels) else f"Spalte {i+1} auswählen"
+            col = st.selectbox(label, columns, key=f'csv_col_{i}')
+            selected_cols.append(col)
+        st.session_state['case_col'] = selected_cols[0]
+        st.session_state['activity_col'] = selected_cols[1]
+        st.session_state['timestamp_col'] = selected_cols[2]
+        st.info(f"Ausgewählte Spalten: {', '.join(selected_cols)}")
+        if st.button('Weiter'):
+            st.session_state['goto_nav'] = '🔎 Prozessvisualisierung'
+            st.rerun()
+    else:
+        st.info('Bitte laden Sie eine CSV-Datei hoch, um fortzufahren.')
