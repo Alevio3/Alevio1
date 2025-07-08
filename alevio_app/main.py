@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import streamlit as st
 from login import login
 from upload_csv import upload_csv
-from prozessvisualisierung import prozessvisualisierung
+from Prozessvisualisierung import prozessvisualisierung
 from kpi_dashboard import kpi_dashboard
 from bottleneck_analyse import bottleneck_analyse
 from action_engine import action_engine
