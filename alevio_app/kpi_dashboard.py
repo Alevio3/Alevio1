@@ -15,7 +15,7 @@ def kpi_dashboard():
     timestamp_col = st.session_state.get('timestamp_col', df.columns[2])
 
     # Zeitspalte als datetime
-    df[timestamp_col] = pd.to_datetime(df[timestamp_col])
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors='coerce')
 
     # KPIs berechnen
     total_cases = df[case_col].nunique()
@@ -26,11 +26,13 @@ def kpi_dashboard():
     throughput_time = (end_time - start_time).total_seconds() / 3600  # in Stunden
 
     # Durchlaufzeit pro Fall
-    case_durations = df.groupby(case_col)[timestamp_col].agg(['min', 'max'])
-    case_durations['duration'] = (case_durations['max'] - case_durations['min']).dt.total_seconds() / 3600
-    avg_case_duration = case_durations['duration'].mean()
-    min_case_duration = case_durations['duration'].min()
-    max_case_duration = case_durations['duration'].max()
+    dauer = df.groupby(case_col)[timestamp_col].agg(['min', 'max'])
+    dauer['Durchlaufzeit (h)'] = (dauer['max'] - dauer['min']).dt.total_seconds() / 3600
+
+    # Durchschnitt, Minimum, Maximum
+    avg_durchlauf = dauer['Durchlaufzeit (h)'].mean()
+    min_durchlauf = dauer['Durchlaufzeit (h)'].min()
+    max_durchlauf = dauer['Durchlaufzeit (h)'].max()
 
     # Layout wie in SAC: KPIs als "Tiles"
     col1, col2, col3, col4 = st.columns(4)
@@ -40,9 +42,9 @@ def kpi_dashboard():
     col4.metric("Zeitraum", f"{start_time.date()} - {end_time.date()}")
 
     col5, col6, col7 = st.columns(3)
-    col5.metric("Ø Durchlaufzeit (h)", f"{avg_case_duration:.2f}")
-    col6.metric("Min. Durchlaufzeit (h)", f"{min_case_duration:.2f}")
-    col7.metric("Max. Durchlaufzeit (h)", f"{max_case_duration:.2f}")
+    st.metric("Ø Durchlaufzeit (h)", f"{avg_durchlauf:.2f}")
+    st.metric("Min. Durchlaufzeit (h)", f"{min_durchlauf:.2f}")
+    st.metric("Max. Durchlaufzeit (h)", f"{max_durchlauf:.2f}")
 
     st.markdown("---")
 
@@ -55,7 +57,7 @@ def kpi_dashboard():
 
     # Durchlaufzeiten als Boxplot
     st.subheader("Durchlaufzeiten pro Fall")
-    fig2 = px.box(case_durations, y="duration", points="all", labels={"duration": "Durchlaufzeit (h)"})
+    fig2 = px.box(dauer, y="Durchlaufzeit (h)", points="all", labels={"Durchlaufzeit (h)": "Durchlaufzeit (h)"})
     st.plotly_chart(fig2, use_container_width=True)
 
     # Fälle pro Zeit (z.B. pro Woche)
