@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 plotly
 openpyxl
 graphviz
 kaleido
->>>>>>> e575111ab5a8010dcc6da7ccc7066471e1b33102
 streamlit
 pandas
