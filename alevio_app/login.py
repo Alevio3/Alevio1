@@ -55,30 +55,31 @@ def password_reset_ui():
             st.error("Benutzername existiert nicht.")
         conn.close()
 
-def register():
+def register_ui():
     st.subheader("Registrieren")
     reg_user = st.text_input("Benutzername", key="reg_user")
     reg_pw = st.text_input("Passwort", type="password", key="reg_pw")
+    reg_pw2 = st.text_input("Passwort wiederholen", type="password", key="reg_pw2")
     if st.button("Registrieren"):
-        st.session_state['show_register'] = True
-
-    if st.session_state.get('show_register'):
-        register()
+        if not reg_user or not reg_pw:
+            st.error("Bitte alle Felder ausfüllen.")
+            return
+        if reg_pw != reg_pw2:
+            st.error("Passwörter stimmen nicht überein.")
+            return
+        try:
+            add_user(reg_user, reg_pw)
+            st.success("Nutzer erfolgreich angelegt! Sie können sich jetzt einloggen.")
+        except Exception as e:
+            st.error(str(e))
 
 def login():
     st.title('Alevio Process Mining Login')
     if 'logged_in_user' not in st.session_state:
-        register = st.checkbox("Noch keinen Account? Jetzt registrieren!")
+        show_register = st.checkbox("Noch keinen Account? Jetzt registrieren!")
 
-        if register:
-            st.subheader("Registrieren")
-            reg_user = st.text_input("Benutzername", key="reg_user")
-            reg_pw = st.text_input("Passwort", type="password", key="reg_pw")
-            if st.button("Registrieren"):
-                st.session_state['show_register'] = True
-
-            if st.session_state.get('show_register'):
-                register()
+        if show_register:
+            register_ui()
         else:
             with st.form('login_form'):
                 username = st.text_input('Benutzername')
@@ -88,8 +89,7 @@ def login():
                     user = get_user(username)
                     if user:
                         db_username, db_pw, db_salt, db_role = user
-                        hashed_input = hashlib.pbkdf2_hmac('sha256', password.encode(), db_salt.encode(), 100000).hex()
-                        if db_pw == hashed_input:
+                        if db_pw == hash_password(password):
                             st.session_state['logged_in_user'] = username
                             st.session_state['logged_in_user_role'] = db_role
                             st.success(f'Willkommen, {username}!')
