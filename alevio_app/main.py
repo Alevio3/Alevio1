@@ -16,7 +16,8 @@ st.set_page_config(page_title="Alevio Process Mining", layout="wide")
 
 # Logo oben in die Sidebar einfügen
 with st.sidebar:
-    st.image("assets/Logo.png", width=220)  # <- Hier die Größe anpassen
+    logo_path = os.path.join(os.path.dirname(__file__), "assets", "Logo.png")
+    st.image(logo_path, width=220)  # <- Hier die Größe anpassen
     st.markdown("---")
 
 PAGES = [
