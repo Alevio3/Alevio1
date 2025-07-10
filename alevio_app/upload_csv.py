@@ -48,12 +48,3 @@ def upload_csv():
 
     st.sidebar.markdown(f"**Schritt {st.session_state['page_idx']+1} von {len(PAGES)}:** {PAGES[st.session_state['page_idx']]}")
 
-    if st.button("Weiter", key="weiter_upload"):
-        # Speichere Auswahl erst jetzt!
-        st.session_state['case_col'] = st.session_state['case_col']
-        st.session_state['activity_col'] = st.session_state['activity_col']
-        st.session_state['timestamp_col'] = st.session_state['timestamp_col_start']
-        st.session_state['timestamp_end_col'] = st.session_state['timestamp_col_end']
-        st.session_state['page_idx'] += 1
-        st.rerun()
-
