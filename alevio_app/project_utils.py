@@ -51,3 +51,14 @@ def load_project_csv(project_id):
     if os.path.exists(csv_path):
         return pd.read_csv(csv_path)
     return None
+
+def delete_project(project_id):
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("DELETE FROM projects WHERE id = ?", (project_id,))
+    conn.commit()
+    conn.close()
+    # Optional: CSV-Datei löschen
+    csv_path = f"project_data/project_{project_id}.csv"
+    if os.path.exists(csv_path):
+        os.remove(csv_path)

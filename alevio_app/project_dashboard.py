@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from project_utils import get_projects, add_project, save_project_csv, load_project_csv
+from project_utils import get_projects, add_project, save_project_csv, load_project_csv, delete_project
 
 TEAMS = ["Controlling", "Einkauf", "IT", "Vertrieb"]
 
@@ -57,8 +57,9 @@ def project_dashboard():
                 st.write(f"**Erstellt am:** {proj['Erstellt am']}")
                 st.info("Hier könnten weitere Details und Aktionen stehen.")
             if st.button("Projekt löschen"):
-                # Schreibe hier eine Funktion, die das Projekt aus der DB entfernt
+                delete_project(proj["ID"])
                 st.success("Projekt gelöscht!")
+                st.experimental_rerun()  # Seite neu laden, damit das gelöschte Projekt verschwindet
             if st.button("Daten anzeigen"):
                 df = load_project_csv(proj["ID"])
                 if df is not None:
